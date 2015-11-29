@@ -20,30 +20,32 @@ RSpec.describe CustomersController, :type => :controller do
 	end
 
 	describe "GET index" do
-	    it "assigns customers to @customer" do
+	    it "assigns all customers to @customers" do
 	     customer = Customer.create! valid_attributes
-	      get :index, valid_session
+	      get :index, {}, valid_session
 	      expect(assigns(:customers)).to eq(customer)
 	    end
 	end
 
 	describe "GET show" do
-		it "assigns particular customer as @customer" do
+		it "assigns requested customer as @customer" do
+			customer = Customer.create! valid_attributes
 			get :show, valid_session
 			expect(assigns(:customer)).to eq(customer)
 		end
 	end
 
 	describe "GET edit" do
-		it "assigns particular customer as @customer" do
-			get :edit, valid_session
+		it "assigns requested customer as @customer" do
+			customer = Customer.create! valid_attributes
+			get :edit, { id: customer.id }, valid_session
 			expect(assigns(:customer)).to eq(customer)
 		end
 	end
 
 	describe "GET new" do
 		it "assigns new customer as @customer" do
-			get :new, valid_session
+			get :new, {}, valid_session
 			expect(assigns(:customer)).to be_instance_of(Customer)
 		end
 	end
@@ -56,42 +58,42 @@ RSpec.describe CustomersController, :type => :controller do
 			expect(Customer.find_by_email(valid_attributes[:email])).to be_present
 		end
 
-		it 'assigns requested user to @customer' do
-			post(:create, {customer: valid_attributes}, valid_session)
+		it 'assigns requested customer to @customer' do
+			post :create, {customer: valid_attributes}, valid_session
 			expect(assigns(:customer)).to eq(Customer.find_by_email(valid_attributes[:email]))
 		end
 
 		it 'redirects to certain customer' do
-			post(:create, {customer: valid_attributes}, valid_session)
+			post :create, { customer: valid_attributes }, valid_session
 			expect(response).to redirect_to assigns(:customer)
-	  end
-  end
+	  	end
+  	end
 end
 
   context "when invalid attributes" do
 			it "does not create requested customer" do
-				post :create, {customer: invalid_attributes}, valid_session
+				post :create, { customer: invalid_attributes }, valid_session
 				expect(Customer.find_by_email(valid_attributes[:email])).to eq(nil)
-		end
+			end
 
 		it "redirects to new template" do
 			post :create, {customer: invalid_attributes}, valid_attributes
 			expect(response).to render_template :new
-			end
 		end
+	end
 
   	# describe "#birthday?" do
   	describe "DELETE destroy" do
-  		it "destroys customer from app store" do
+  		it "destroys specific customer account" do
   			customer = Customer.create! valid_attributes
-  			delete :destroy, {id: customer.id}, valid_session
+  			delete :destroy, { id: customer.id }, valid_session
 			expect(Customer.find_by_id(customer.id)).to be_nil
   		end
-  	end
 
   		it "redirects to the customers path" do
   			customer = Customer.create! valid_attributes
   			delete :destroy, {id: customer.id}, valid_session
-  			expect(response).to redirect_to (new_customer_path)
+  			expect(response).to redirect_to (customer_path)
   		end
+	end
 end
